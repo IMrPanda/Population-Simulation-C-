@@ -1,0 +1,86 @@
+-Program çalıştığında oyunun çalışacağı tur sayısı alınmalı.
+-Sonra format olarak "18 25 79 37 62 86 17 50" şeklinde sayılar birer boşluk ile ayrılmış şekilde 2 basamaklı sayılar olmalıdır. 
+-geliştirilen oyunda şehre bağlı ilçeler-ilçeye bağlı mahalleler-mahallede yaşayan kişiler olacaktır
+girilen sayıların anlamları şöyle : 18 sayısı şehirdeki nüfusu gösteriyor yani oyun 8 il ile başladı yukardaki örnekte
+* sayıların onlar basamağı bu şehre bağlı kaç adet ilçe var onu gösteriyor. 
+* sayıların birler basamağı ise mahalle sayısını temsil ediyor. Mahalle sayısı ilçelere eşit bölünmelidir. 18 için 1 ilçede 8 mahalle. 25 sayısı için 2 ilçe 5 mahalle. Bu sebeple en yakın bölünebilen sayıya arttırılıp ilçe sayısı 6 olacaktır. yeni sayı bu sebeple 26 olur ve her ilçede 3 mahalle olur. Eğer 79 gibi bir sayı olursa 7 ilçe 9 mahalle , onlar basamağı değişmeyecek ve birler basamağı 1 den başlayarak 9'a kadar ilerleyecek. İlçe sayısına bölünebilen ilk değerde (bu örnekte 7) duracak ve sayımız bu şekilde 77 olacak. 
+* sayıların KENDİ değerleri ise o ildeki toplam nüfusu temsil etmektedir. Bu değer de yine mahallelere eşit oranda bölünmelidir. 18 sayısı mesela 8 e bölünemez (nüfus mahalle sayısına tam bölünemez ise) bu sebeple ildeki son nüfus 8 in bir katına dönüşmek zorundadır. Bu sa 24 olur. FAKAT bu yeni sayı ilçe ve mahale sayısında bir değişime neden olmayacaktır. Hala 1 ilçe 8 mahalle var , tek fark şu an 24 insan olduğu için her mahalleye eşit nüfus düşüyor. 
+
+-Oyunda her turun sonunda şehir nüfusları gösterilmelidir , her satıra 5 şehir gelecek şekilde düzenlenmeli. 8 il vardı az önce o yüzden 5 yukarda 3 aşağıda olacak. Ve az önceki şartları gerçekleştirdiğimizde oluşacak ve ilk tura başlamadan olan nüfus durumu şu şekilde olur : 
+[24]-[30]-[77]-[45]-[66] 
+[88]-[21]-[55] 
+ daha sonrasında ilk tur başlar. Tur esnasında yapılacaklar :
+* katsayı : nüfus değerinin basamakları toplanacak (2+4 = 6)
+* bu değer , tüm mahallenin nüfusunun kaç kat olacağını gösteriyor
+* mahallelerdeki kişi sayısını bu yeni katsayı sayısıyla çarpacağız (24 sayısı için 3 kişiydi , 3x6=18) oluşan yeni sayı da bizim toplam nüfusu arttıracak katsayımız.
+*şimdi ise mahalle sayısı ile bu yeni katsayıyı çarpıp yeni nüfusu bulacağız (18 sayısından dolayı 8 mahalle , 8x18=144 yeni nüfusumuz) 
+-Eğer bir sebepten bu basamakların toplamı sıfır olursa, o şehirdeki her mahallede nüfus sadece 1 kişi artar.
+- Turlar peş peşe hızlı bir şekilde bu mantıkla devam 
+edecek ve sürekli şehirlerin nüfusları ekranda görünecektir. 
+- Ekran her turun sonunda temizlenmelidir. Her turdan sonra devam etmek için tuşa bastırarak ilk turun sonuçlarını sildirebiliriz. Mesela başlangıç değerleri yazdı , tur 1 gerçekleşti. Tuşa basında başlangıç değerleri yerine tur 1 değerleri yukarda yazar sonra tur 2 değerleri yazar. böyle böyle istenilen tura kadar devam ederiz. Eğer tur kalmadıysa da oyun sonu diye ---------
+
+- Bir turun sonuna geldiğinde tüm şehirlerin nüfuslarına bakıyorsun. Eğer herhangi bir ilin nüfusu 1000 veya daha fazlaysa (yani 4 basamaklıysa):
+* Yeni oluşan şehre Java Faker kütüphanesi kullanılarak rastgele yeni bir isim veriliyor. Eski şehrin ismi aynı kalıyor.
+* İlçeler bölünüyor , Eğer bölünecek şehrin ilçe sayısı çift ise: İlçeler tam ortadan ikiye bölünüyor (Örn: 8 ilçe varsa 4'ü kalıyor, 4'ü yeni şehre gidiyor).
+* Eğer bölünecek şehrin ilçe sayısı tek ise: Yeni şehre giden ilçe sayısı 1 eksik oluyor. Yani tek ise 1 arttırıp 2 ye bölüp sonra 1 azaltarak gönderiyoruz sonraki ilçeye. Daha kolay bir hesabı da olabilir (Örn: 7 ilçe varsa, 4 ilçe eski şehirde kalıyor, 3 ilçe yeni şehre taşınıyor)
+* İlçeler kendilerine bağlı mahalle ve nüfusları da alıyor. Bu sebeple de aslında nüfus 2 ye bölünmüş gibi oluyor. Ama il için bir sayı oluşturmayacağız. Girişteki sayılar gibi bir sayı olmayacak o yüzden sadece ilçeler bölünecek gibi düşünebiliriz.  
+* Yeni iller listenin sonuna ekleniyor. 
+** mesela 1078 nüfuslu tek ilçeli , oyun başındaki 79 sayısından. 7 ilçe. 
+1078 / 7 = 154 (ilçe başına nüfus). 7 olduğundan 4 ve 3 ilçe olarak ayrılacak, 4x154 ve 3x154 işleminden eski şehir=616 kalır , yeni şehir=462 olarak oluşturulur.
+** mesela 1408 nüfuslu çift ilçeli, oyun başında 86 sayısından. 8 ilçe. 
+1408 / 8 = 176 (ilçe başına nüfus). 8 olduğundan 4 4 bölünür. 4x176=704. eski ve yeni şehir aynı nüfusla olur. 
+
+---------------------------------
+
+sistem hiyerarşisi: 
+oyun sınıfı : tüm simülasyonu yönetecek
+şehir sınıfı: ad , toplam nüfus ve ilçelerin listesi
+ilçe sınıfı : ad , nüfus ve ilçeye bağlı mahalle listesi
+mahalle sınıfı: ad , nüfus ve mahallede yaşasan kişilerin listesi 
+kişi sınıfı: adı/soyadı , yaş , ID (int türü)
+* faker ile oyun başı her kişiye 0-50 arası yaş atanacak. her tur bitiminde simülasyondaki herkesin yaşı 1 artacak. 
+* nüfus arttıkça for/while içinde fakeri tekrar çağırıp bu insanlara yeni isim ve soy isimler üreteceğiz. Yeni gelen nüfustakileri de yeni doğmuş gibi düşünüp 0 yaşında gibi kabul edip tur sonunda her türlü 1 yaşına basmış olurlar. 
+* ID değeri eşsiz olacak , kişi sınıfında static sayaç yapıp her yeni kişide ID 1 arttırarak ilerlemek en mantıklısı) yeni gelen insanlar için de bu sayaç çok kolay hayat kurtarır. 
+
+- oyun bitiminde en son ekranda son şehrin nüfus durumları yazacak. 
+= satır sütün seçimi : şehirleri matris gibi düşün, 0 dan başlayarak satır sütunlardan bir değer isteyeceksin. satır ve sütun değerine göre istenilen şehir seçilmiş olacak
+== seçilen şehirdeki tüm veriler ekrana dökülecek. format şöyle:
+ŞEHİR : ad - nüfus : değer 
+İLÇE : ad - nüfus : değer
+MAHALLE : ad - nüfus : değer
+KİŞİLER : 
+	ID-ad-yaş
+	ID-ad-yaş
+	... diğer kişiler
+MAHALLE : ad - nüfus : değer 
+KİŞİLER:
+	ID-ad-yaş
+	ID-ad-yaş
+	... diğer kişiler 
+... diğer mahalleler
+
+
+
+
+---------------------------------------------------------------------
+
+kişi sınıfı: 
+1) öncelikle Kisi sınıfı içerisinde bize bi "name" ve "surname" string veri tipinde veriler lazım.
+
+2) "age" olarak da faker kütüphanesi ile 0-50 arası rastgele atanan bir 'int' veri tipinde bir yaş verisi olmalı
+
+3) private static int sayac = 1 ile de kişilere sıra sıra ID değeri vermemiz lazım. ID değeri her yeni kişide 1 artarak yapmalıyız. Her yeni kişi yaratıldığında bu sayaçtan alıp 1 arttırarak kendisine tanımlasın.
+
+4) her nüfus arttığında for/while döngüsü içinde fakeri çağırıp "name" "surname" ve "age" verileri atanıcak.
+
+5) herkesin yaşını 1 arttırmak için Kisi sınıfı içinde bir "yaslan()" metodu oluştur ve "age" verisini tur bittiğinde 1 arttırmamızı sağlasın bu metod. Yeni eklenen nüfustakiler 0 yaşında eklensin ve yine bu kişiler için de bu metod çalışacak ve tur sonunda 1 yaşında olacaklar.
+
+
+
+
+
+
+
+
+ 
+
